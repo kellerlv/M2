@@ -59,6 +59,9 @@ peek loadedFiles
 	 "oddOperators",
 	 "evenCenter",
 	 "oddCenter",
+	 -- TODO: "same as symmetricMatrix" refers to a doc node that is
+	 -- commented out further down (-* doc /// ... /// *- near line 2282);
+	 -- either restore the alias or remove this hint.
 	 "symMatrix",--same as symmetricMatrix
 	  "symmetricM", -- key for CliffordModule
 	 "hyperellipticBranchEquation", -- key for CliffordModule
@@ -606,6 +609,10 @@ centers(List,List) := (eOdd,eEv) -> (
 
 
 
+-- TODO: this TEST is a near-duplicate of the "Test of the pfaffian formula"
+-- TEST block further down in the test cluster; now that the unasserted
+-- `all(n,i->...)` lines below have been wrapped in `assert`, the two TESTs
+-- are essentially identical -- consider removing one.
 TEST///
 
 -- Testing the pfaffian formula
@@ -641,7 +648,10 @@ factorToList(Product) := pf ->(
     llpf := apply(lpf,p->toList p);
     apply(llpf, pair-> (pair_0)^(pair_1))
 )
-///    
+-- TODO: the `///...///` block below is an inert string literal, not a TEST
+-- (no `TEST` prefix).  It checks an invariant of the internal helper
+-- factorToList against an undefined `f`; promote to a real TEST or delete.
+///
     pf = factor f
     assert (f == product factorToList factor f)
 ///
@@ -1527,6 +1537,9 @@ S' := ring d0;
 kk := coefficientRing Ubar;
 S := kk[gens Ubar,s,t];
 S'toS := map(S, S', apply(n,i->S_(i+2))|{S_0,S_1} );
+-- TODO: the author's "ceiling/floor correct?" comment below remains open;
+-- the new TEST for ciModuleToMatrixFactorization (isHomogeneous + the matrix
+-- factorization identity) confirms the output is at least self-consistent.
 fixDegs := d->( -- are the ceiling/floor functions applied correctly?
     d' := S'toS d;
     td := degrees target d;
@@ -3581,6 +3594,9 @@ betti (F2=cliffordModuleToCIResolution(M,S,CI))
 assert(ideal F2.dd_(2*g+3)_{0}^{0..2*g+1} == ideal gens CI)
 
 --This was omitted from a test because it's slow
+-- TODO: the comment above is misleading -- the g=3 branch below is in the
+-- live TEST and runs (around 1.8s of TEST runtime); either drop the comment
+-- or actually omit the branch with `if false then`.
 kk = ZZ/101;g=1
 g=3
 (S,qq,R,u, M1,M2, Mu1, Mu2) = randomNicePencil(kk,g);
@@ -3909,6 +3925,9 @@ secondMatrix(Matrix,RingElement) := (m,q) -> (
     t:=m*m'//q*id_(target m);    
    map(source m,,m'*inverse t)
    )
+-- TODO: this TEST sits after `end--` and is therefore ignored by M2; it
+-- also references undefined `m`, `q` and could not run as-is.  Promote it
+-- with proper setup or delete it.
 TEST///
 m'=secondMatrix(m,q)
 betti m, betti m'
