@@ -337,8 +337,43 @@ failing test cases there:
 - **Hypersurface matrix factorization** on `k[x,y]/(x⁴ − y²)` — period-2
   resolution with Knörrer-periodicity-respecting L_∞-module structure.
 
-HomotopyLieAlgebra now has **23 / 23 TEST blocks passing** (was 16; +7 from
-the unblocked cases).
+HomotopyLieAlgebra now has **24 / 24 TEST blocks passing** (was 16; +8 from
+the unblocked cases and divided-power addition).
+
+### Divided-power L_∞ option
+
+A `DividedPower => false` option has been added to both `isLInfinity` and
+`isLInfinityModule`. The classical default uses the Sym-coalgebra
+(char-0) formulation; with `DividedPower => true` the check iterates over
+multi-indices `(e_1, …, e_n)` instead of basis tuples and uses the
+divided-power coproduct weights `∏ binom(e_v, f_v)`. Two new primitives
+`bracketGamma` and `muGamma` evaluate ell_r / mu_r on a divided-power basis
+element directly (no `multFactor = ∏ e_v!`).
+
+For characteristic 0 or `char > (n-1)!`, the two formulations agree. In
+small characteristic (e.g. char 2 with the L_3 identity), `multFactor` can
+vanish and the classical check trivially holds on repeated arguments
+without probing the divided-power structure; the DP variant catches this.
+
+When `char ≤ (n-1)!`, `isLInfinity` and `isLInfinityModule` now emit a
+warning explicitly noting that the classical check is a necessary but not
+sufficient condition.
+
+### Performance
+
+`isLInfinityModule` was profiled and optimized: the inner loop in
+`muBasisBasisA1` (over all module generators, with per-iteration term
+decomposition) was replaced with a lazily-built hash cache keyed by
+`(k, hom-deg-sum, canonical monomial) → list of (l, coefficient)`.
+Analogous cache for `lInfBracketBasisA1`. Speedup on HMF cases:
+
+| Case | Before | After |
+|---|---|---|
+| HMF Ω³ check | 9.1 s | 0.3 s |
+| HMF Ω⁵ check | ~17 s | 0.6 s |
+| HMF Ω⁷ check | **218 s** | **1.2 s** |
+
+(180× speedup on Ω⁷ — the bottleneck case.)
 
 ### Explicit nontrivial mu_3 demonstrated
 
