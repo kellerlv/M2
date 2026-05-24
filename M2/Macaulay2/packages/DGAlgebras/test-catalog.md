@@ -321,6 +321,47 @@ Spun off as a follow-up task.
 
 ---
 
+## Downstream impact: HomotopyLieAlgebra package
+
+The HomotopyLieAlgebra package depends on `minimalSemifreeResolution` for
+its `lInfinityModule` construction. The fix unblocked several previously-
+failing test cases there:
+
+- **HMF Ω³, Ω⁵, Ω⁷** over `k[a,b,c]/(a⁴, b⁴, c⁴)` — `isLInfinityModule(LM, 3) = true`
+  now passes, where previously the test was annotated as a "known
+  construction-side limitation" (mu₁ ≠ 0 due to non-minimal resolution).
+- **ADE singularities** (A₂ cusp, E₆) — L_∞-module identity verified.
+- **Avramov-Buchweitz support variety modules** (R/(a+b+c), R/(a,b)).
+- **Golod ring** `k[a,b]/m²` and **Burch ring** `k[a,b]/(a², ab)` — via acyclic
+  closure with `T_{2,j}` generators in homological degree 2.
+- **Hypersurface matrix factorization** on `k[x,y]/(x⁴ − y²)` — period-2
+  resolution with Knörrer-periodicity-respecting L_∞-module structure.
+
+HomotopyLieAlgebra now has **23 / 23 TEST blocks passing** (was 16; +7 from
+the unblocked cases).
+
+### Explicit nontrivial mu_3 demonstrated
+
+On HMF Ω³ over `(a⁴, b⁴, c⁴)`, with `T_i ∈ A.natural` corresponding to
+the ideal generators and `e_k ∈ M_0` the residue-field generators:
+
+```
+mu({T_1, T_2}, e_0) = 1·e_43
+mu({T_1, T_3}, e_1) = -1·e_43
+mu({T_1, T_3}, e_2) = -2·e_39 + 1·e_45
+mu({T_2, T_3}, e_0) = -1·e_37 + 2·e_39
+mu({T_2, T_3}, e_1) = 1·e_40
+```
+
+(Image lands in hom-deg 3 generators e_37, e_39, e_40, e_43, e_45 — per
+the L_∞ degree shift: mu_3 of two hom-deg-1 algebra args + hom-deg-0
+module arg → hom-deg 3 module element.)
+
+This confirms the L_∞-module structure is **genuinely nontrivial** (not
+just that the identity holds vacuously with mu_r = 0 for all r ≥ 3).
+
+---
+
 ## Known limitations (orthogonal to the fix)
 
 1. **Mixed-degree defining ideals require weighted grading.** For numerical
